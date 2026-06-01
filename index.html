@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="一个轻量化、可扩展、面向写作和文本处理的小工具平台。"
+    />
+    <title>小工具库｜写作与文本处理工具平台</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <header class="site-hero">
+      <nav class="topbar" aria-label="主导航">
+        <a class="brand" href="index.html" aria-label="回到工具库首页">
+          <span class="brand-mark">小</span>
+          <span>小工具库</span>
+        </a>
+        <a class="deploy-link" href="tools.json" target="_blank" rel="noreferrer">
+          查看 JSON 配置
+        </a>
+      </nav>
+
+      <section class="hero-content">
+        <p class="eyebrow">Writing & Text Utilities</p>
+        <h1>轻量化、可扩展的写作小工具平台</h1>
+        <p class="hero-description">
+          统一管理你制作的多个小工具，通过 JSON 配置即可新增卡片；每个工具独立存放，方便迭代、分享和部署。
+        </p>
+        <div class="hero-actions">
+          <a class="primary-button" href="#tools">浏览工具</a>
+          <a class="secondary-button" href="README.md">查看维护说明</a>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section class="panel controls-panel" aria-labelledby="filter-title">
+        <div>
+          <p class="section-kicker">Filter</p>
+          <h2 id="filter-title">搜索与筛选</h2>
+        </div>
+        <div class="controls" role="search">
+          <label class="search-box">
+            <span class="sr-only">搜索工具</span>
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="搜索标题、简介或标签..."
+              autocomplete="off"
+            />
+          </label>
+          <label>
+            <span>分类</span>
+            <select id="categoryFilter">
+              <option value="all">全部分类</option>
+            </select>
+          </label>
+          <label>
+            <span>状态</span>
+            <select id="statusFilter">
+              <option value="all">全部状态</option>
+              <option value="available">可用</option>
+              <option value="planned">规划中</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="tools-section" id="tools" aria-labelledby="tools-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Library</p>
+            <h2 id="tools-title">工具卡片</h2>
+          </div>
+          <p id="resultSummary" class="result-summary" aria-live="polite">正在加载工具...</p>
+        </div>
+        <div id="toolGrid" class="tool-grid" aria-live="polite"></div>
+        <div id="emptyState" class="empty-state" hidden>
+          <strong>没有找到匹配的工具</strong>
+          <p>试试换一个关键词，或选择“全部分类 / 全部状态”。</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>通过 <code>tools.json</code> 添加新工具；每个工具建议放在 <code>tools/工具名/</code> 子文件夹。</p>
+    </footer>
+
+    <script src="assets/app.js" defer></script>
+  </body>
+</html>

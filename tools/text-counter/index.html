@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文本计数器｜小工具库</title>
+    <link rel="stylesheet" href="../../assets/styles.css" />
+    <style>
+      .tool-page {
+        width: min(920px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 56px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 280px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        padding: 18px;
+        font: inherit;
+        line-height: 1.7;
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 4px rgba(114, 87, 255, 0.12);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .stat-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--surface-strong);
+        padding: 18px;
+      }
+
+      .stat-card strong {
+        display: block;
+        font-size: 1.8rem;
+        line-height: 1;
+      }
+
+      .stat-card span {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      @media (max-width: 720px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="tool-page">
+      <a class="deploy-link" href="../../index.html">← 返回工具库</a>
+      <section class="hero-content" style="margin: 36px 0 24px">
+        <p class="eyebrow">Text Counter</p>
+        <h1>文本计数器</h1>
+        <p class="hero-description">粘贴文本后实时查看字数、字符数、段落数与预计阅读时间。</p>
+      </section>
+
+      <section class="panel" style="padding: 22px">
+        <label>
+          <span>输入文本</span>
+          <textarea id="textInput" placeholder="在这里粘贴你的草稿..."></textarea>
+        </label>
+        <div class="stats-grid" aria-live="polite">
+          <div class="stat-card"><strong id="charCount">0</strong><span>字符数</span></div>
+          <div class="stat-card"><strong id="wordCount">0</strong><span>字词数</span></div>
+          <div class="stat-card"><strong id="paragraphCount">0</strong><span>段落数</span></div>
+          <div class="stat-card"><strong id="readingTime">0</strong><span>分钟阅读</span></div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const textInput = document.querySelector("#textInput");
+      const charCount = document.querySelector("#charCount");
+      const wordCount = document.querySelector("#wordCount");
+      const paragraphCount = document.querySelector("#paragraphCount");
+      const readingTime = document.querySelector("#readingTime");
+
+      function countWords(text) {
+        const chineseChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+        const latinWords = (text.match(/[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)*/g) || []).length;
+        return chineseChars + latinWords;
+      }
+
+      function updateStats() {
+        const text = textInput.value;
+        const words = countWords(text);
+        const paragraphs = text.trim() ? text.trim().split(/\n\s*\n/).length : 0;
+
+        charCount.textContent = text.length;
+        wordCount.textContent = words;
+        paragraphCount.textContent = paragraphs;
+        readingTime.textContent = words ? Math.max(1, Math.ceil(words / 400)) : 0;
+      }
+
+      textInput.addEventListener("input", updateStats);
+      updateStats();
+    </script>
+  </body>
+</html>
