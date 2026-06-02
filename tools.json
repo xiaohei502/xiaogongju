@@ -29,22 +29,16 @@
       "status": "planned",
       "icon": "✍",
       "path": "tools/title-polisher/"
-    }
+    },
     {
-    "id": "paragraph-version-writer",
-    "title": "段落版本写作器",
-    "description": "按段落编辑文本，每段可保留多个版本，并选择展示版进行复制或导出。",
-    "category": "文本处理",
-    "tags": [
-      "文本处理",
-      "写作",
-      "段落",
-      "版本管理"
-    ],
-    "status": "available",
-    "icon": "✒",
-    "path": "tools/paragraph-version-writer/"
-    }
-
+      "id": "paragraph-version-writer",
+      "title": "段落版本写作器",
+      "description": "按段落编辑文本，每段可保留多个版本，并选择展示版进行复制或导出。",
+      "category": "文本处理",
+      "tags": ["文本处理", "写作", "段落", "版本管理"],
+      "status": "available",
+      "icon": "✒",
+      "path": "tools/paragraph-version-writer/"
+    },
   ]
 }
