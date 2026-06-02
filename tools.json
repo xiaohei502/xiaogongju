@@ -31,6 +31,16 @@
       "path": "tools/title-polisher/"
     },
     {
+    "id": "light-novel-translator",
+    "title": "轻小说机翻器",
+    "description": "上传或粘贴轻小说文本，调用 API 进行分段流式翻译，并支持完整性验证与缺失段落修复。",
+    "category": "AI辅助",
+    "tags": ["AI辅助", "翻译", "轻小说", "文本处理"],
+    "status": "available",
+    "icon": "🤖",
+    "path": "tools/light-novel-translator/"
+    }，
+    {
       "id": "paragraph-version-writer",
       "title": "段落版本写作器",
       "description": "按段落编辑文本，每段可保留多个版本，并选择展示版进行复制或导出。",
