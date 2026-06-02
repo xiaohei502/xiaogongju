@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>轻小说机翻器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #f9f7f3;
+            font-family: 'Segoe UI', 'Noto Sans CJK SC', Roboto, 'Helvetica Neue', sans-serif;
+            color: #1e2a3a;
+            padding: 1.5rem;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .header {
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #2c3e4e, #1a2a36);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .badge {
+            background: #e9e2d4;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            display: inline-block;
+            margin-top: 0.3rem;
+        }
+        .api-section {
+            background: #fff7ef;
+            border: 1px solid #f0e2d0;
+            border-radius: 28px;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+        .api-input-group {
+            flex: 2;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .api-input-group label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            background: #e9dfd1;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+        }
+        #apiKeyInput, #apiBaseUrlInput, #modelInput {
+            flex: 3;
+            min-width: 240px;
+            padding: 0.6rem 1rem;
+            border-radius: 48px;
+            border: 1px solid #ddd0be;
+            background: white;
+            font-family: monospace;
+            font-size: 0.8rem;
+            outline: none;
+        }
+        .api-status {
+            font-size: 0.75rem;
+            background: #e4f3ec;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+        }
+        #apiBaseUrlInput {
+            flex: 2;
+            min-width: 280px;
+        }
+        #modelInput {
+            flex: 1;
+            min-width: 220px;
+        }
+        .api-help {
+            font-size: 0.7rem;
+            color: #8a6f4f;
+            background: #fff4e5;
+            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+        }
+        .toolbar {
+            background: white;
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #ede5d6;
+        }
+        .file-label {
+            background: #2c3e4e;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-block;
+            transition: 0.2s;
+        }
+        .file-label:hover {
+            background: #1f2e3b;
+        }
+        .file-name {
+            font-size: 0.8rem;
+            color: #5c6b7a;
+            background: #f0ede7;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+        }
+        .lang-select {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f4f1eb;
+            padding: 0.3rem 1rem;
+            border-radius: 48px;
+        }
+        select, button {
+            background: #f0ede7;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button.primary {
+            background: #2c3e4e;
+            color: white;
+        }
+        button.primary:hover {
+            background: #1e2f3a;
+        }
+        button.danger {
+            background: #f3e1df;
+            color: #b33;
+        }
+        button.danger:hover {
+            background: #ebd3d0;
+        }
+        button.warning {
+            background: #f5e6d3;
+            color: #c47b2e;
+            border: 1px solid #e7cfb0;
+        }
+        .progress-section {
+            background: #fffcf8;
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .progress-bar-container {
+            flex: 3;
+            background: #e4dbce;
+            border-radius: 40px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #2c7a5e;
+            transition: width 0.2s;
+        }
+        .status-text {
+            font-size: 0.8rem;
+            background: #ece3d9;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+        }
+        .integrity-warning {
+            background: #fff1e0;
+            border-left: 4px solid #e67e22;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            color: #b45b1a;
+        }
+        .editor-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+        }
+        .panel {
+            flex: 1;
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            border: 1px solid #ede1d2;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel-header {
+            background: #fefaf5;
+            padding: 0.8rem 1.2rem;
+            border-bottom: 1px solid #f1e4d6;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+        .textarea-box {
+            padding: 1rem;
+            min-height: 55vh;
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+        #originalText {
+            width: 100%;
+            min-height: 55vh;
+            border: none;
+            resize: vertical;
+            font-family: monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            outline: none;
+        }
+        .translation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .trans-block {
+            border-left: 3px solid #c0cfb2;
+            padding-left: 12px;
+            background: #fefcf9;
+            border-radius: 0 12px 12px 0;
+            font-size: 0.92rem;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            cursor: text;
+            transition: background 0.1s;
+        }
+        .trans-block:focus {
+            background: #fff9ef;
+            outline: none;
+            border-left-color: #7c9c6e;
+        }
+        .trans-block.streaming {
+            border-left-color: #f4a261;
+            background: #fff6ea;
+        }
+        .trans-block.invalid {
+            border-left-color: #e67e22;
+            background: #fff2e6;
+        }
+        .footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8f9aab;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        @media (max-width: 800px) {
+            body { padding: 0.8rem; }
+            .toolbar .btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🤖 轻小说机翻器</h1>
+        <div class="badge">⚡ 流式显示 | API连通测试 | 完整性验证 | 缺失段落重译</div>
+    </div>
+
+    <div class="api-section">
+        <div class="api-input-group">
+            <label>🔑 API Key</label>
+            <input type="password" id="apiKeyInput" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+            <span class="api-status" id="apiStatusIcon">⚪ 未设置</span>
+            <button id="testApiBtn" class="warning" type="button">🧪 测试Key</button>
+        </div>
+        <div class="api-input-group">
+            <label>🧭 服务商</label>
+            <select id="providerSelect">
+                <option value="siliconflow">硅基流动 SiliconFlow</option>
+                <option value="deepseek">DeepSeek 官方</option>
+            </select>
+            <label>🌐 目标语言</label>
+            <select id="targetLang">
+                <option value="简体中文">简体中文</option>
+                <option value="繁体中文">繁体中文</option>
+                <option value="英语">英语</option>
+                <option value="韩语">韩语</option>
+            </select>
+        </div>
+        <div class="api-input-group" style="flex-basis:100%;">
+            <label>🛰️ Base URL</label>
+            <input type="text" id="apiBaseUrlInput" placeholder="https://api.siliconflow.cn/v1">
+            <label>🧠 模型</label>
+            <input type="text" id="modelInput" placeholder="deepseek-ai/DeepSeek-V3.2">
+            <span class="api-help">DeepSeek官方建议：deepseek-v4-pro / deepseek-v4-flash；硅基流动用平台模型名</span>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div>
+            <label class="file-label">
+                📂 上传TXT
+                <input type="file" id="fileInput" accept=".txt" style="display:none">
+            </label>
+            <span id="fileName" class="file-name">未选择文件</span>
+        </div>
+        <div class="btn-group">
+            <button id="translateBtn" class="primary">▶ 开始翻译</button>
+            <button id="stopBtn">⏹️ 停止</button>
+            <button id="verifyBtn" class="warning">🔍 验证完整性</button>
+            <button id="repairBtn" class="warning">🔧 修复缺失段落</button>
+            <button id="downloadBtn" class="primary">📥 下载译文</button>
+            <button id="clearBtn" class="danger">🗑️ 清空</button>
+        </div>
+    </div>
+
+    <div class="progress-section">
+        <div class="progress-bar-container"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="status-text" id="statusMsg">⚡ 请粘贴API Key并上传文件</div>
+        <div id="integrityHint" class="integrity-warning" style="display: none;">⚠️ 完整性未通过</div>
+    </div>
+
+    <div class="editor-panel">
+        <div class="panel">
+            <div class="panel-header"><span>📖 原文 (日语/任意语言)</span><span id="srcCharCount">0 字符</span></div>
+            <div class="textarea-box"><textarea id="originalText" placeholder="上传或粘贴日语内容，段落间建议空行（双换行分段）" rows="20"></textarea></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span>🌐 译文 (实时流式输出，可编辑)</span><span id="transCharCount">0 字符</span></div>
+            <div class="textarea-box" id="translationArea"><div id="translationBlocks" class="translation-container"><div style="color:#bbb; text-align:center; padding:2rem;">✨ 设置API Key后开始翻译</div></div></div>
+        </div>
+    </div>
+    <div class="footer">🔹 流式输出 | 可随时停止 | 支持完整性检测及单独修复缺失段落 | 确保最终译文完整无重复</div>
+</div>
+
+<script>
+    // DOM 元素
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const apiStatusIcon = document.getElementById('apiStatusIcon');
+    const testApiBtn = document.getElementById('testApiBtn');
+    const providerSelect = document.getElementById('providerSelect');
+    const apiBaseUrlInput = document.getElementById('apiBaseUrlInput');
+    const modelInput = document.getElementById('modelInput');
+    const targetLangSelect = document.getElementById('targetLang');
+    const fileInput = document.getElementById('fileInput');
+    const fileNameSpan = document.getElementById('fileName');
+    const originalTextarea = document.getElementById('originalText');
+    const translateBtn = document.getElementById('translateBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const repairBtn = document.getElementById('repairBtn');
+    const progressFill = document.getElementById('progressFill');
+    const statusMsgSpan = document.getElementById('statusMsg');
+    const srcCharCount = document.getElementById('srcCharCount');
+    const transCharCount = document.getElementById('transCharCount');
+    const translationBlocksDiv = document.getElementById('translationBlocks');
+    const integrityHint = document.getElementById('integrityHint');
+
+    // 核心数据
+    let currentParagraphs = [];     // 原始段落数组
+    let currentTransCache = [];     // 译文缓存
+    let isTranslating = false;
+    let isRepairing = false;
+    let stopRequested = false;
+    let activeTaskType = 'none';     // 'translating', 'repairing'
+    let activeStreamController = null;
+
+    // ========== 辅助函数 ==========
+    const API_PROVIDERS = {
+        siliconflow: {
+            label: '硅基流动 SiliconFlow',
+            baseUrl: 'https://api.siliconflow.cn/v1',
+            model: 'deepseek-ai/DeepSeek-V3.2',
+            storageKey: 'sf_api_key'
+        },
+        deepseek: {
+            label: 'DeepSeek 官方',
+            baseUrl: 'https://api.deepseek.com',
+            model: 'deepseek-v4-pro',
+            storageKey: 'deepseek_api_key'
+        }
+    };
+
+    function getSelectedProvider() {
+        return API_PROVIDERS[providerSelect.value] || API_PROVIDERS.siliconflow;
+    }
+
+    function buildApiUrl(baseUrl, path) {
+        const cleanBase = (baseUrl || '').trim().replace(/\/+$/, '');
+        if (!cleanBase) return '';
+        if (cleanBase.endsWith('/chat/completions') || cleanBase.endsWith('/models')) return cleanBase;
+        return cleanBase + path;
+    }
+
+    function getApiConfig() {
+        const provider = getSelectedProvider();
+        const baseUrl = apiBaseUrlInput.value.trim() || provider.baseUrl;
+        const model = modelInput.value.trim() || provider.model;
+        return {
+            providerKey: providerSelect.value,
+            providerLabel: provider.label,
+            baseUrl,
+            chatUrl: buildApiUrl(baseUrl, '/chat/completions'),
+            modelsUrl: buildApiUrl(baseUrl, '/models'),
+            model,
+            apiKey: apiKeyInput.value.trim()
+        };
+    }
+
+    function updateApiStatus() {
+        const cfg = getApiConfig();
+        const key = cfg.apiKey;
+        if (!key) {
+            apiStatusIcon.innerText = '⚪ 未设置';
+            apiStatusIcon.style.color = '#6b7280';
+        } else if (key.startsWith('sk-')) {
+            apiStatusIcon.innerText = `✅ 已设置 · ${cfg.providerLabel}`;
+            apiStatusIcon.style.color = '#2c7a5e';
+        } else {
+            apiStatusIcon.innerText = `⚠️ Key格式非常见 · ${cfg.providerLabel}`;
+            apiStatusIcon.style.color = '#b45b1a';
+        }
+    }
+
+    function validateApiConfig() {
+        const cfg = getApiConfig();
+        if (!cfg.apiKey) throw new Error('请先填写 API Key');
+        if (!cfg.baseUrl) throw new Error('请填写 Base URL');
+        if (!cfg.model) throw new Error('请填写模型名');
+        if (!cfg.chatUrl) throw new Error('Base URL 无效');
+        return cfg;
+    }
+
+    function applyProviderDefaults(force = false) {
+        const provider = getSelectedProvider();
+        if (force || !apiBaseUrlInput.value.trim()) apiBaseUrlInput.value = provider.baseUrl;
+        if (force || !modelInput.value.trim()) modelInput.value = provider.model;
+        const saved = localStorage.getItem(provider.storageKey) || (providerSelect.value === 'siliconflow' ? localStorage.getItem('ds_api_key') : '');
+        apiKeyInput.value = saved || '';
+        updateApiStatus();
+    }
+
+    // 保存/读取本地API设置。注意：本地HTML保存到 localStorage，仅适合个人本机使用。
+    function loadApiSettingsFromStorage() {
+        const savedProvider = localStorage.getItem('translator_provider');
+        if (savedProvider && API_PROVIDERS[savedProvider]) providerSelect.value = savedProvider;
+        apiBaseUrlInput.value = localStorage.getItem('translator_base_url_' + providerSelect.value) || '';
+        modelInput.value = localStorage.getItem('translator_model_' + providerSelect.value) || '';
+        applyProviderDefaults(false);
+    }
+
+    function saveApiSettings() {
+        const provider = getSelectedProvider();
+        const key = apiKeyInput.value.trim();
+        localStorage.setItem('translator_provider', providerSelect.value);
+        if (key) localStorage.setItem(provider.storageKey, key);
+        else localStorage.removeItem(provider.storageKey);
+        localStorage.setItem('translator_base_url_' + providerSelect.value, apiBaseUrlInput.value.trim() || provider.baseUrl);
+        localStorage.setItem('translator_model_' + providerSelect.value, modelInput.value.trim() || provider.model);
+    }
+
+    function extractErrorMessage(errText) {
+        if (!errText) return '';
+        try {
+            const obj = JSON.parse(errText);
+            return obj.message || obj.error?.message || obj.error || errText;
+        } catch (e) {
+            return errText;
+        }
+    }
+
+    function makeHttpError(response, errText, cfg) {
+        const rawMessage = extractErrorMessage(errText).slice(0, 300);
+        let hint = '';
+        if (response.status === 401) hint = `API Key无效，或你把 ${cfg.providerLabel} 以外平台的 Key 填到了这里。`;
+        else if (response.status === 400) hint = `请求参数不正确，常见原因是模型名不存在：${cfg.model}`;
+        else if (response.status === 403) hint = '权限不足，可能需要实名认证、余额、模型权限或账号权限。';
+        else if (response.status === 429) hint = '触发限速/额度限制，请稍后重试或降低并发。';
+        else hint = '接口返回异常。';
+        return new Error(`HTTP ${response.status}: ${hint} 原始信息：${rawMessage}`);
+    }
+
+    async function testApiConnection() {
+        let cfg;
+        try {
+            cfg = validateApiConfig();
+        } catch (err) {
+            statusMsgSpan.innerText = `❌ ${err.message}`;
+            return;
+        }
+        saveApiSettings();
+        testApiBtn.disabled = true;
+        statusMsgSpan.innerText = `🧪 正在测试 ${cfg.providerLabel} 的 Key 和模型列表...`;
+        try {
+            const response = await fetch(cfg.modelsUrl, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${cfg.apiKey}` }
+            });
+            if (!response.ok) {
+                const errText = await response.text();
+                throw makeHttpError(response, errText, cfg);
+            }
+            const data = await response.json().catch(() => null);
+            const models = Array.isArray(data?.data) ? data.data.map(m => m.id) : [];
+            const matched = models.includes(cfg.model);
+            statusMsgSpan.innerText = matched
+                ? `✅ Key有效，模型可用：${cfg.model}`
+                : `✅ Key有效，但模型列表中未发现「${cfg.model}」。请核对模型名，或直接尝试翻译。`;
+        } catch (err) {
+            statusMsgSpan.innerText = `❌ 测试失败：${err.message.slice(0, 240)}`;
+        } finally {
+            testApiBtn.disabled = false;
+            updateApiStatus();
+        }
+    }
+
+    apiKeyInput.addEventListener('input', updateApiStatus);
+    apiKeyInput.addEventListener('blur', saveApiSettings);
+    apiBaseUrlInput.addEventListener('input', () => { updateApiStatus(); saveApiSettings(); });
+    modelInput.addEventListener('input', saveApiSettings);
+    providerSelect.addEventListener('change', () => { applyProviderDefaults(true); saveApiSettings(); });
+    
+    function splitParagraphs(text) {
+        if (!text.trim()) return [];
+        let paras = text.split(/\r?\n\s*\r?\n/);
+        if (paras.length === 1 && text.includes('\n')) paras = text.split(/\r?\n/);
+        return paras.map(p => p.replace(/\r/g, '').trimEnd());
+    }
+
+    function isValidTranslation(text) {
+        if (!text || text.trim() === '') return false;
+        const invalidKeywords = ['⏳ 待翻译', '⚠️ 翻译失败', '⏹️ 已中断', '待翻译', '翻译失败', '已中断'];
+        for (let kw of invalidKeywords) {
+            if (text.includes(kw)) return false;
+        }
+        return true;
+    }
+
+    function renderTranslations(paragraphCount, existing = null) {
+        translationBlocksDiv.innerHTML = '';
+        if (paragraphCount === 0) {
+            translationBlocksDiv.innerHTML = '<div style="color:#bbb; text-align:center; padding:2rem;">暂无内容</div>';
+            updateTransStats();
+            return;
+        }
+        for (let i = 0; i < paragraphCount; i++) {
+            const text = (existing && existing[i] !== undefined) ? existing[i] : '';
+            const block = document.createElement('div');
+            block.className = 'trans-block';
+            if (text && !isValidTranslation(text)) block.classList.add('invalid');
+            block.setAttribute('data-index', i);
+            block.setAttribute('contenteditable', 'true');
+            block.innerText = text || '⏳ 待翻译';
+            block.addEventListener('input', function() {
+                const idx = parseInt(this.dataset.index);
+                if (!isNaN(idx) && currentTransCache) {
+                    currentTransCache[idx] = this.innerText;
+                    if (!isValidTranslation(this.innerText)) this.classList.add('invalid');
+                    else this.classList.remove('invalid');
+                }
+                updateTransStats();
+                updateIntegrityHintVisibility();
+            });
+            translationBlocksDiv.appendChild(block);
+        }
+        updateTransStats();
+        updateIntegrityHintVisibility();
+    }
+
+    function updateTranslationBlock(index, text, isStreaming = false) {
+        const block = document.querySelector(`.trans-block[data-index='${index}']`);
+        if (block) {
+            block.innerText = text;
+            if (isStreaming) {
+                block.classList.add('streaming');
+            } else {
+                block.classList.remove('streaming');
+                if (!isValidTranslation(text)) block.classList.add('invalid');
+                else block.classList.remove('invalid');
+            }
+            if (currentTransCache) currentTransCache[index] = text;
+            updateTransStats();
+            updateIntegrityHintVisibility();
+        }
+    }
+
+    function updateSrcStats() {
+        srcCharCount.innerText = originalTextarea.value.length + ' 字符';
+    }
+    function updateTransStats() {
+        let total = 0;
+        document.querySelectorAll('.trans-block').forEach(b => total += b.innerText.length);
+        transCharCount.innerText = total + ' 字符';
+    }
+    originalTextarea.addEventListener('input', updateSrcStats);
+
+    function updateIntegrityHintVisibility() {
+        if (!currentParagraphs.length) {
+            integrityHint.style.display = 'none';
+            return;
+        }
+        const missing = getMissingParagraphIndices();
+        if (missing.length > 0) {
+            integrityHint.style.display = 'inline-block';
+            integrityHint.innerText = `⚠️ 缺失/无效段落: ${missing.length} 处`;
+        } else {
+            integrityHint.style.display = 'none';
+        }
+    }
+
+    function getMissingParagraphIndices() {
+        if (!currentParagraphs.length) return [];
+        const missing = [];
+        for (let i = 0; i < currentParagraphs.length; i++) {
+            const originalPara = currentParagraphs[i];
+            if (originalPara.trim() === '') continue;
+            const transText = currentTransCache[i] || '';
+            if (!isValidTranslation(transText)) missing.push(i);
+        }
+        return missing;
+    }
+
+    function verifyIntegrity() {
+        if (!currentParagraphs.length) {
+            statusMsgSpan.innerText = '📭 没有原文内容，请先上传或输入。';
+            return;
+        }
+        const missing = getMissingParagraphIndices();
+        const totalValid = currentParagraphs.filter(p => p.trim() !== '').length;
+        if (missing.length === 0) {
+            statusMsgSpan.innerText = `✅ 完整性验证通过！共 ${totalValid} 个有效段落，译文全部有效。`;
+            integrityHint.style.display = 'none';
+        } else {
+            const displayMissing = missing.slice(0, 8).map(i => i+1).join(', ');
+            const more = missing.length > 8 ? `等${missing.length}处` : '';
+            statusMsgSpan.innerText = `⚠️ 完整性失败：缺失/无效段落 ${missing.length}/${totalValid} 段 (第 ${displayMissing}${more})。请使用「修复缺失段落」`;
+            integrityHint.style.display = 'inline-block';
+            integrityHint.innerText = `⚠️ 缺失/无效: ${missing.length} 处`;
+            document.querySelectorAll('.trans-block').forEach(block => {
+                const idx = parseInt(block.dataset.index);
+                if (missing.includes(idx)) block.classList.add('invalid');
+                else if (isValidTranslation(block.innerText)) block.classList.remove('invalid');
+            });
+        }
+        updateTransStats();
+    }
+
+    // ========== 核心API流式翻译 ==========
+    async function translateParagraphStream(paragraph, targetLang, apiConfig, onUpdate, signal) {
+        if (!paragraph.trim()) return '';
+        const prompt = `请将以下文本翻译成${targetLang}。只输出翻译结果，不要添加任何解释、注释或额外内容。\n\n原文：\n${paragraph}`;
+        const payload = {
+            model: apiConfig.model,
+            messages: [
+                { role: 'system', content: '你是一个专业的轻小说翻译助手，只输出翻译结果，不输出无关内容。' },
+                { role: 'user', content: prompt }
+            ],
+            temperature: 0.3,
+            max_tokens: 4096,
+            stream: true
+        };
+        // DeepSeek 官方新模型默认开启 thinking。翻译场景更适合关闭思考输出，避免串出推理内容。
+        if (apiConfig.providerKey === 'deepseek') payload.thinking = { type: 'disabled' };
+        
+        const response = await fetch(apiConfig.chatUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiConfig.apiKey}` },
+            body: JSON.stringify(payload),
+            signal: signal
+        });
+        if (!response.ok) {
+            const errText = await response.text();
+            throw makeHttpError(response, errText, apiConfig);
+        }
+        if (!response.body) throw new Error('浏览器没有拿到流式响应体，请检查接口是否支持 stream。');
+        
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let accumulated = '';
+        let buffer = '';
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+            for (const line of lines) {
+                const cleanLine = line.trim();
+                if (!cleanLine.startsWith('data:')) continue;
+                const data = cleanLine.replace(/^data:\s*/, '');
+                if (!data || data === '[DONE]') continue;
+                try {
+                    const parsed = JSON.parse(data);
+                    const delta = parsed.choices?.[0]?.delta?.content || '';
+                    if (delta) {
+                        accumulated += delta;
+                        onUpdate(accumulated);
+                    }
+                } catch (e) {
+                    console.warn('忽略无法解析的SSE片段：', data);
+                }
+            }
+        }
+        return accumulated;
+    }
+
+    async function translateParagraphSafeStream(paragraph, targetLang, apiConfig, onUpdate, signal) {
+        const MAX_LEN = 2500;
+        if (paragraph.length <= MAX_LEN) {
+            return await translateParagraphStream(paragraph, targetLang, apiConfig, onUpdate, signal);
+        }
+        const sentences = paragraph.split(/(?<=[。！？!?])/g);
+        let chunks = [], cur = '';
+        for (let s of sentences) {
+            if ((cur + s).length <= MAX_LEN) cur += s;
+            else {
+                if (cur) chunks.push(cur);
+                cur = s;
+            }
+        }
+        if (cur) chunks.push(cur);
+        let fullTranslation = '';
+        for (let idx = 0; idx < chunks.length; idx++) {
+            if (signal?.aborted) throw new Error('Aborted');
+            const chunkResult = await translateParagraphStream(chunks[idx], targetLang, apiConfig, (partial) => {
+                let tempFull = (idx === 0) ? partial : fullTranslation + partial;
+                onUpdate(tempFull);
+            }, signal);
+            fullTranslation = (idx === 0) ? chunkResult : fullTranslation + chunkResult;
+            onUpdate(fullTranslation);
+            if (idx < chunks.length - 1) await new Promise(r => setTimeout(r, 300));
+        }
+        return fullTranslation;
+    }
+
+    async function translateSingleParagraph(idx, targetLang, apiConfig, signal) {
+        const paragraph = currentParagraphs[idx];
+        if (!paragraph.trim()) {
+            updateTranslationBlock(idx, '');
+            return true;
+        }
+        try {
+            let finalText = '';
+            const streamingUpdate = (partial) => {
+                if (!stopRequested) updateTranslationBlock(idx, partial, true);
+            };
+            finalText = await translateParagraphSafeStream(paragraph, targetLang, apiConfig, streamingUpdate, signal);
+            if (!stopRequested) {
+                updateTranslationBlock(idx, finalText, false);
+            } else {
+                updateTranslationBlock(idx, '⏹️ 已中断', false);
+                return false;
+            }
+            return true;
+        } catch (err) {
+            if (err.name === 'AbortError' || stopRequested) {
+                updateTranslationBlock(idx, '⏹️ 已中断', false);
+                return false;
+            } else {
+                updateTranslationBlock(idx, `⚠️ 翻译失败: ${err.message.slice(0, 80)}`, false);
+                return false;
+            }
+        }
+    }
+
+    function updateProgress(current, total, isRepair = false) {
+        const percent = total === 0 ? 0 : (current / total) * 100;
+        progressFill.style.width = `${percent}%`;
+    }
+
+    async function startTranslation() {
+        let apiConfig;
+        try {
+            apiConfig = validateApiConfig();
+            saveApiSettings();
+        } catch (err) {
+            statusMsgSpan.innerText = `❌ ${err.message}`;
+            return;
+        }
+        const source = originalTextarea.value;
+        if (!source.trim()) {
+            statusMsgSpan.innerText = '❌ 原文为空，请上传或输入内容';
+            return;
+        }
+        if (isTranslating || isRepairing) {
+            stopRequested = true;
+            if (activeStreamController) activeStreamController.abort();
+            await new Promise(r => setTimeout(r, 100));
+        }
+        stopRequested = false;
+        activeTaskType = 'translating';
+        isTranslating = true;
+        isRepairing = false;
+        
+        const paragraphs = splitParagraphs(source);
+        currentParagraphs = paragraphs;
+        currentTransCache = new Array(paragraphs.length).fill('');
+        renderTranslations(paragraphs.length, currentTransCache);
+        
+        translateBtn.disabled = true;
+        stopBtn.disabled = false;
+        verifyBtn.disabled = true;
+        repairBtn.disabled = true;
+        const targetLang = targetLangSelect.value;
+        let completed = 0;
+        updateProgress(0, paragraphs.length);
+        statusMsgSpan.innerText = `🚀 开始流式翻译，共 ${paragraphs.length} 段`;
+        
+        for (let i = 0; i < paragraphs.length; i++) {
+            if (stopRequested) {
+                statusMsgSpan.innerText = `⏸️ 已停止于段落 ${i}/${paragraphs.length}`;
+                break;
+            }
+            if (!paragraphs[i].trim()) {
+                updateTranslationBlock(i, '');
+                completed = i+1;
+                updateProgress(completed, paragraphs.length);
+                continue;
+            }
+            statusMsgSpan.innerText = `🔄 翻译中 ${i+1}/${paragraphs.length} : ${paragraphs[i].slice(0, 40)}...`;
+            const abortController = new AbortController();
+            activeStreamController = abortController;
+            try {
+                await translateSingleParagraph(i, targetLang, apiConfig, abortController.signal);
+            } catch (e) {}
+            finally {
+                if (activeStreamController === abortController) activeStreamController = null;
+            }
+            completed = i+1;
+            updateProgress(completed, paragraphs.length);
+            if (i < paragraphs.length-1 && !stopRequested) await new Promise(r => setTimeout(r, 300));
+        }
+        
+        isTranslating = false;
+        activeTaskType = 'none';
+        translateBtn.disabled = false;
+        stopBtn.disabled = true;
+        verifyBtn.disabled = false;
+        repairBtn.disabled = false;
+        if (!stopRequested && completed === paragraphs.length) {
+            statusMsgSpan.innerText = `✅ 翻译完成！共 ${paragraphs.length} 段`;
+            verifyIntegrity();
+        } else if (stopRequested) {
+            statusMsgSpan.innerText = `⏹️ 已停止，可继续翻译或修复缺失段落`;
+        } else {
+            statusMsgSpan.innerText = `⚠️ 未完成，可重新开始或修复缺失段落`;
+        }
+        updateTransStats();
+        updateIntegrityHintVisibility();
+    }
+
+    async function repairMissingParagraphs() {
+        let apiConfig;
+        try {
+            apiConfig = validateApiConfig();
+            saveApiSettings();
+        } catch (err) {
+            statusMsgSpan.innerText = `❌ ${err.message}`;
+            return;
+        }
+        if (!currentParagraphs.length) {
+            statusMsgSpan.innerText = '❌ 没有原文内容，无法修复';
+            return;
+        }
+        const missingIndices = getMissingParagraphIndices();
+        if (missingIndices.length === 0) {
+            statusMsgSpan.innerText = '✅ 所有段落均已有效，无需修复';
+            return;
+        }
+        if (isTranslating || isRepairing) {
+            stopRequested = true;
+            if (activeStreamController) activeStreamController.abort();
+            await new Promise(r => setTimeout(r, 100));
+        }
+        stopRequested = false;
+        activeTaskType = 'repairing';
+        isRepairing = true;
+        isTranslating = false;
+        
+        translateBtn.disabled = true;
+        stopBtn.disabled = false;
+        verifyBtn.disabled = true;
+        repairBtn.disabled = true;
+        
+        const targetLang = targetLangSelect.value;
+        let repairedCount = 0;
+        const total = missingIndices.length;
+        statusMsgSpan.innerText = `🔧 开始修复缺失段落 (共 ${total} 段)...`;
+        updateProgress(0, total);
+        
+        for (let idx = 0; idx < missingIndices.length; idx++) {
+            if (stopRequested) {
+                statusMsgSpan.innerText = `⏸️ 修复已停止，已完成 ${repairedCount}/${total}`;
+                break;
+            }
+            const paraIndex = missingIndices[idx];
+            const paraContent = currentParagraphs[paraIndex];
+            if (!paraContent.trim()) {
+                updateTranslationBlock(paraIndex, '');
+                repairedCount++;
+                updateProgress(repairedCount, total);
+                continue;
+            }
+            statusMsgSpan.innerText = `🔧 修复段落 ${paraIndex+1}/${currentParagraphs.length} : ${paraContent.slice(0, 40)}...`;
+            const abortController = new AbortController();
+            activeStreamController = abortController;
+            try {
+                const success = await translateSingleParagraph(paraIndex, targetLang, apiConfig, abortController.signal);
+                if (!stopRequested && success && isValidTranslation(currentTransCache[paraIndex])) repairedCount++;
+            } catch (e) {}
+            finally {
+                if (activeStreamController === abortController) activeStreamController = null;
+            }
+            updateProgress(repairedCount, total);
+            if (idx < missingIndices.length-1 && !stopRequested) await new Promise(r => setTimeout(r, 300));
+        }
+        
+        isRepairing = false;
+        activeTaskType = 'none';
+        translateBtn.disabled = false;
+        stopBtn.disabled = true;
+        verifyBtn.disabled = false;
+        repairBtn.disabled = false;
+        if (!stopRequested && repairedCount === total) {
+            statusMsgSpan.innerText = `✅ 修复完成！所有 ${total} 个缺失段落已重新翻译。`;
+        } else if (stopRequested) {
+            statusMsgSpan.innerText = `⏸️ 修复已停止，剩余缺失段落可再次修复。`;
+        } else {
+            statusMsgSpan.innerText = `⚠️ 修复未完全成功，可再次点击修复。`;
+        }
+        verifyIntegrity();
+        updateIntegrityHintVisibility();
+    }
+
+    function stopCurrentTask() {
+        if (isTranslating || isRepairing) {
+            stopRequested = true;
+            if (activeStreamController) {
+                activeStreamController.abort();
+                activeStreamController = null;
+            }
+            statusMsgSpan.innerText = '⏳ 正在停止任务...';
+        } else {
+            statusMsgSpan.innerText = '未在进行翻译/修复任务';
+        }
+    }
+
+    function downloadTranslation() {
+        if (!currentParagraphs.length || !currentTransCache.some(t => t && t.trim())) {
+            alert('没有译文可下载，请先翻译或导入内容');
+            return;
+        }
+        const missing = getMissingParagraphIndices();
+        if (missing.length > 0) {
+            const confirmDl = confirm(`⚠️ 检测到 ${missing.length} 个段落缺失或无效译文，下载的译文不完整。是否仍要下载？`);
+            if (!confirmDl) return;
+        }
+        let output = '';
+        for (let i = 0; i < currentParagraphs.length; i++) {
+            const trans = currentTransCache[i] || '';
+            if (trans.trim() !== '') output += trans;
+            if (i !== currentParagraphs.length - 1) output += '\n\n';
+        }
+        const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = `翻译结果_${new Date().toISOString().slice(0,19)}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        statusMsgSpan.innerText = '✅ 译文已下载';
+    }
+
+    function clearAll() {
+        if (isTranslating || isRepairing) {
+            stopRequested = true;
+            if (activeStreamController) activeStreamController.abort();
+        }
+        originalTextarea.value = '';
+        currentParagraphs = [];
+        currentTransCache = [];
+        renderTranslations(0);
+        updateSrcStats();
+        statusMsgSpan.innerText = '🗑️ 已清空所有内容';
+        progressFill.style.width = '0%';
+        integrityHint.style.display = 'none';
+        translateBtn.disabled = false;
+        stopBtn.disabled = true;
+        verifyBtn.disabled = false;
+        repairBtn.disabled = false;
+        isTranslating = false;
+        isRepairing = false;
+        activeTaskType = 'none';
+        stopRequested = false;
+    }
+
+    function handleFileUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        fileNameSpan.innerText = file.name;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            originalTextarea.value = ev.target.result;
+            updateSrcStats();
+            // 清空旧的翻译缓存
+            currentParagraphs = [];
+            currentTransCache = [];
+            renderTranslations(0);
+            integrityHint.style.display = 'none';
+            if (isTranslating || isRepairing) {
+                stopRequested = true;
+                if (activeStreamController) activeStreamController.abort();
+            }
+            statusMsgSpan.innerText = '✅ 文件已加载，点击“开始翻译”';
+        };
+        reader.readAsText(file, 'UTF-8');
+    }
+
+    // ========== 事件绑定 ==========
+    translateBtn.addEventListener('click', startTranslation);
+    testApiBtn.addEventListener('click', testApiConnection);
+    stopBtn.addEventListener('click', stopCurrentTask);
+    verifyBtn.addEventListener('click', verifyIntegrity);
+    repairBtn.addEventListener('click', repairMissingParagraphs);
+    downloadBtn.addEventListener('click', downloadTranslation);
+    clearBtn.addEventListener('click', clearAll);
+    fileInput.addEventListener('change', handleFileUpload);
+    document.querySelector('.file-label').addEventListener('click', () => fileInput.click());
+    
+    // 初始加载
+    loadApiSettingsFromStorage();
+    updateSrcStats();
+    stopBtn.disabled = true;
+    if (originalTextarea.value.trim() === '') renderTranslations(0);
+</script>
+</body>
+</html>
+```
