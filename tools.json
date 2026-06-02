@@ -1,6 +1,13 @@
 {
   "tools": [
     {
+      "id": "paragraph-version-writer",
+      "title": "段落版本写作器",
+      "description": "按章节和段落写作，给每个段落管理多个候选版本，并可导入文本、复制 TXT / Markdown、导出源文件 JSON。",
+      "category": "写作辅助",
+      "tags": ["写作", "段落", "版本管理", "导入导出"],
+      "status": "available",
+      "path": "tools/paragraph-version-writer/"
       "id": "text-counter",
       "title": "文本计数器",
       "description": "快速统计字数、字符数、段落数和预计阅读时间，适合草稿检查。",
