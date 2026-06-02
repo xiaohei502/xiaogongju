@@ -8,6 +8,34 @@
       "tags": ["写作", "段落", "版本管理", "导入导出"],
       "status": "available",
       "path": "tools/paragraph-version-writer/"
+      "id": "text-counter",
+      "title": "文本计数器",
+      "description": "快速统计字数、字符数、段落数和预计阅读时间，适合草稿检查。",
+      "category": "文本处理",
+      "tags": ["字数", "统计", "写作"],
+      "status": "available",
+      "icon": "字",
+      "path": "tools/text-counter/"
+    },
+    {
+      "id": "markdown-cleaner",
+      "title": "Markdown 清理器",
+      "description": "整理多余空行、统一标题间距，并为发布前的 Markdown 文档做基础清洁。",
+      "category": "Markdown",
+      "tags": ["Markdown", "格式化", "清理"],
+      "status": "available",
+      "icon": "M",
+      "path": "tools/markdown-cleaner/"
+    },
+    {
+      "id": "title-polisher",
+      "title": "标题润色助手",
+      "description": "规划中的标题改写与风格建议工具，用于生成更清晰的文章标题。",
+      "category": "写作辅助",
+      "tags": ["标题", "润色", "规划中"],
+      "status": "planned",
+      "icon": "✍",
+      "path": "tools/title-polisher/"
     }
   ]
 }

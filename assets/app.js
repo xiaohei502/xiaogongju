@@ -37,6 +37,7 @@ function getStatusLabel(status) {
 }
 
 function getSearchText(tool) {
+function getToolSearchText(tool) {
   return normalizeText([
     tool.title,
     tool.description,
@@ -63,6 +64,7 @@ function getFilteredTools() {
 
   return state.tools.filter((tool) => {
     const matchesQuery = !query || getSearchText(tool).includes(query);
+    const matchesQuery = !query || getToolSearchText(tool).includes(query);
     const matchesCategory = state.category === "all" || tool.category === state.category;
     const matchesStatus = state.status === "all" || tool.status === state.status;
 
@@ -78,6 +80,11 @@ function createToolCard(tool) {
   const linkHref = isAvailable && tool.path ? tool.path : "#";
   const linkClass = isAvailable ? "open-tool" : "open-tool is-disabled";
   const linkText = isAvailable ? "打开" : "规划中";
+  const statusLabel = getStatusLabel(tool.status);
+  const isAvailable = tool.status === "available";
+  const linkText = isAvailable ? "打开工具 →" : "敬请期待";
+  const linkClass = isAvailable ? "open-tool" : "open-tool is-disabled";
+  const linkHref = isAvailable && tool.path ? tool.path : "#";
   const linkAttributes = isAvailable ? "" : 'aria-disabled="true" tabindex="-1"';
 
   return `
@@ -91,6 +98,17 @@ function createToolCard(tool) {
       <div class="tag-list" aria-label="工具标签">${tags}</div>
       <div class="card-footer">
         <span></span>
+      <div class="card-header">
+        <div class="card-icon" aria-hidden="true">${escapeHtml(tool.icon || "✦")}</div>
+        <span class="status-badge status-${escapeHtml(tool.status)}">${escapeHtml(statusLabel)}</span>
+      </div>
+      <div>
+        <h3>${escapeHtml(tool.title)}</h3>
+        <p>${escapeHtml(tool.description)}</p>
+      </div>
+      <div class="tag-list" aria-label="工具标签">${tags}</div>
+      <div class="card-footer">
+        <span class="category">${escapeHtml(tool.category || "未分类")}</span>
         <a class="${linkClass}" href="${escapeHtml(linkHref)}" ${linkAttributes}>${linkText}</a>
       </div>
     </article>
@@ -103,6 +121,7 @@ function renderTools() {
   elements.toolGrid.innerHTML = filteredTools.map(createToolCard).join("");
   elements.emptyState.hidden = filteredTools.length > 0;
   elements.resultSummary.textContent = `${filteredTools.length} / ${state.tools.length}`;
+  elements.resultSummary.textContent = `共 ${filteredTools.length} / ${state.tools.length} 个工具`;
 }
 
 function bindEvents() {
@@ -137,6 +156,13 @@ async function loadTools() {
   } catch (error) {
     elements.resultSummary.textContent = "加载失败";
     elements.toolGrid.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
+    elements.resultSummary.textContent = "工具配置加载失败";
+    elements.toolGrid.innerHTML = `
+      <div class="empty-state">
+        <strong>无法读取 tools.json</strong>
+        <p>${escapeHtml(error.message)}</p>
+      </div>
+    `;
   }
 }
 

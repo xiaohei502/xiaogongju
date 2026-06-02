@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Markdown 清理器｜小工具库</title>
+    <link rel="stylesheet" href="../../assets/styles.css" />
+    <style>
+      .tool-page {
+        width: min(980px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 56px;
+      }
+
+      .editor-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 360px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        padding: 18px;
+        font: 0.95rem/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 4px rgba(114, 87, 255, 0.12);
+      }
+
+      .action-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 16px 0;
+      }
+
+      .copy-button {
+        border: 0;
+        cursor: pointer;
+      }
+
+      @media (max-width: 760px) {
+        .editor-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="tool-page">
+      <a class="deploy-link" href="../../index.html">← 返回工具库</a>
+      <section class="hero-content" style="margin: 36px 0 24px">
+        <p class="eyebrow">Markdown Cleaner</p>
+        <h1>Markdown 清理器</h1>
+        <p class="hero-description">移除行尾空格、压缩多余空行，并统一标题前后的基础间距。</p>
+      </section>
+
+      <section class="panel" style="padding: 22px">
+        <div class="editor-grid">
+          <label>
+            <span>原始 Markdown</span>
+            <textarea id="source" placeholder="# 标题&#10;&#10;&#10;粘贴 Markdown 内容..."></textarea>
+          </label>
+          <label>
+            <span>清理结果</span>
+            <textarea id="output" readonly></textarea>
+          </label>
+        </div>
+        <div class="action-row">
+          <button class="primary-button copy-button" id="cleanButton" type="button">清理内容</button>
+          <button class="secondary-button copy-button" id="copyButton" type="button">复制结果</button>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const source = document.querySelector("#source");
+      const output = document.querySelector("#output");
+      const cleanButton = document.querySelector("#cleanButton");
+      const copyButton = document.querySelector("#copyButton");
+
+      function cleanMarkdown(text) {
+        return text
+          .replace(/[ \t]+$/gm, "")
+          .replace(/\n{3,}/g, "\n\n")
+          .replace(/([^\n])\n(#{1,6}\s)/g, "$1\n\n$2")
+          .replace(/(#{1,6}[^\n]+)\n([^\n#])/g, "$1\n\n$2")
+          .trim();
+      }
+
+      function updateOutput() {
+        output.value = cleanMarkdown(source.value);
+      }
+
+      cleanButton.addEventListener("click", updateOutput);
+      source.addEventListener("input", updateOutput);
+      copyButton.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(output.value);
+        copyButton.textContent = "已复制";
+        setTimeout(() => {
+          copyButton.textContent = "复制结果";
+        }, 1200);
+      });
+      updateOutput();
+    </script>
+  </body>
+</html>
